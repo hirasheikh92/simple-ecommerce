@@ -1,11 +1,9 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
+import Image from "next/image";
 
-const inter = Inter({ subsets: ["latin"] });
 async function getBlogs() {
   const res = await fetch(
-    `https://cdn.contentful.com/spaces/${process.env.CONTENTFUL_SPACE_ID}/entries?access_token=${process.env.CONTENTFUL_ACCESS_KEY}&content_type=blog`,
+    `https://cdn.contentful.com/spaces/${process.env.CONTENTFUL_SPACE_ID}/entries?access_token=${process.env.CONTENTFUL_ACCESS_KEY}&content_type=items`,
     { cache: "no-store" }
   );
 
@@ -26,8 +24,8 @@ export default async function Home() {
       <div className='grid grid-cols-4 p-5 gap-5'>
         {blogs.items.map((blog: any) => (
           <div className=' bg-white p-5' key={blog.sys.id}>
-            {blogs.includes?.Asset.map((elem: any) => (
-              <div key={blog.fields.image.sys.id}>
+            {blogs.includes.Asset.map((elem: any) => (
+              <div>
                 {blog.fields.image.sys.id == elem.sys.id ? (
                   <Image
                     src={"https:" + elem.fields.file.url}
@@ -43,7 +41,9 @@ export default async function Home() {
             ))}
 
             <h1 className=' text-3xl font-semibold p-2'>{blog.fields.title}</h1>
-            <p className='text-md'>{blog.fields.description}</p>
+            <div className='text-md'>
+              {documentToReactComponents(blog.fields.description)}
+            </div>
             <p className='text-md text-2xl'>Size: {blog.fields.size}</p>
             <h2 className=' font-bold'>Rs: {blog.fields.price}</h2>
           </div>
